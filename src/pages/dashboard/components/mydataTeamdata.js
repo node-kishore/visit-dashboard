@@ -27,7 +27,7 @@ function MyData(props) {
     }
     return <Filter
                     onfilterApply={onfilterApply.bind(this)}
-                    filterByUser="false"
+                    filterByUser="true"
                     filterByDate="true"
                     dateFormat="without_time"
                     onlyCustomDate={props.onlyCustomDate}
@@ -37,11 +37,14 @@ function MyData(props) {
 }
 
 function updateMyData(val) {
-    // console.log(val);
+    console.log(val);
+    let selectedUser = val.selectedUsers.map(elem => {
+        return elem.id
+    })
     this.setState({
         filterActive: ""
     })
-    this.getMyData(val.startDate, val.endDate, this.state.myDataActive);
+    this.getMyData(val.startDate, val.endDate, this.state.myDataActive, selectedUser);
 }
 
 class MyDataTeamData extends Component {
@@ -64,7 +67,8 @@ class MyDataTeamData extends Component {
             activityFilter: "Last 7 Days",
             activities: [],
             myDataLoading: false,
-            activityLoading: false
+            activityLoading: false,
+            allSubordinates: []
         }
         updateMyData = updateMyData.bind(this);
     }
@@ -90,14 +94,25 @@ class MyDataTeamData extends Component {
         })
     }
 
-    getMyData(fromDate, toDate, data_type) {
+    getMyData(fromDate, toDate, data_type, userIds) {
         this.setState({
             myDataLoading: true
         })
-        let req = {
-            "from_date": fromDate,
-            "to_date": toDate,
-            "my_data": data_type === true ? 1 : 0
+        let req = {};
+        if(data_type === true) {
+            req = {
+                "from_date": fromDate,
+                "to_date": toDate,
+                "my_data": 1
+            }
+        }
+        else {
+            req = {
+                "from_date": fromDate,
+                "to_date": toDate,
+                "my_data": 0,
+                "user_ids": userIds
+            }
         }
         let axiosConfig = {
             headers: {
@@ -131,15 +146,71 @@ class MyDataTeamData extends Component {
             })
     }
 
+    getAllSubordinates() {
+        let axiosConfig = {
+            headers: {
+                'Content-Type': 'application/json',
+                "wtoken": localStorage.getItem("authToken"),
+            }
+        };
+        axios.get(ENDPOINTS.get_subordinates, axiosConfig)
+            .then(res => {
+                // console.log(res);
+                if(res.data.status && res.data.status == 401) {
+                    this.props.history.push('/');
+                }
+                else {
+                    this.setState({
+                        allSubordinates: res.data
+                    })
+                }
+            })
+    }
+
     componentDidMount() {
+        this.getAllSubordinates();
         let fromDate = moment().startOf('month').format(dateFormat);
         let toDate = moment().format(dateFormat);
-        console.log(fromDate);
-        console.log(toDate);
-        this.getMyData(fromDate, toDate, true);
+        // console.log(fromDate);
+        // console.log(toDate);
+        this.getMyData(fromDate, toDate, true, []);
         this.setState({
             username: JSON.parse(localStorage.getItem("userData")).user_name.split(" ")[0]
         })
+    }
+
+    getAllUserId(item) {
+        // console.log(item.length);
+        let idMap = [];
+        let ids = [];
+        if(item.length > 0) {
+            idMap = item.reduce(function merge(map, node) {
+              map[node.id] = node;
+
+              if (Array.isArray(node.users)) {
+                node.users.reduce(merge, map);
+              }
+
+              return map;
+            }, {});
+        }
+        if(item.length === undefined) {
+            idMap = [item].reduce(function merge(map, node) {
+              map[node.id] = node;
+
+              if (Array.isArray(node.users)) {
+                node.users.reduce(merge, map);
+              }
+
+              return map;
+            }, {});
+        }
+        // let allNestedIds = [];
+        let idMapKeys = Object.keys(idMap);
+        for(let i = 0; i < idMapKeys.length; i++) {
+            ids.push(idMap[idMapKeys[i]].id);
+        }
+        return ids;
     }
 
     changeTab(val) {
@@ -150,7 +221,7 @@ class MyDataTeamData extends Component {
             })
             let fromDate = moment().startOf('month').format(dateFormat);
             let toDate = moment().format(dateFormat);
-            this.getMyData(fromDate, toDate, true);
+            this.getMyData(fromDate, toDate, true, []);
         }
         if(val === "Team Data") {
             this.setState({
@@ -159,7 +230,8 @@ class MyDataTeamData extends Component {
             })
             let fromDate = moment().startOf('month').format(dateFormat);
             let toDate = moment().format(dateFormat);
-            this.getMyData(fromDate, toDate, false);
+            let allIds = this.getAllUserId(this.state.allSubordinates);
+            this.getMyData(fromDate, toDate, false, allIds);
         }
     }
 
@@ -171,37 +243,37 @@ class MyDataTeamData extends Component {
             let startDate = moment(new Date()).format(dateFormat);
             let endDate = moment(new Date()).format(dateFormat);
             let dataType = this.state.myDataActive === true ? 1 : 0;
-            this.getMyData(startDate, endDate, dataType);
+            this.getMyData(startDate, endDate, dataType, []);
         }
         else if(val === "Yesterday") {
             let startDate = moment(new Date()).add(-1,'days').format(dateFormat);
             let endDate = moment(new Date()).add(-1,'days').format(dateFormat);
             let dataType = this.state.myDataActive === true ? 1 : 0;
-            this.getMyData(startDate, endDate, dataType);
+            this.getMyData(startDate, endDate, dataType, []);
         }
         else if(val === "Last 7 Days") {
             let startDate = moment(new Date()).add(-6,'days').format(dateFormat);
             let endDate = moment(new Date()).format(dateFormat);
             let dataType = this.state.myDataActive === true ? 1 : 0;
-            this.getMyData(startDate, endDate, dataType);
+            this.getMyData(startDate, endDate, dataType, []);
         }
         else if(val === "Last 30 Days") {
             let startDate = moment(new Date()).add(-29,'days').format(dateFormat);
             let endDate = moment(new Date()).format(dateFormat);
             let dataType = this.state.myDataActive === true ? 1 : 0;
-            this.getMyData(startDate, endDate, dataType);
+            this.getMyData(startDate, endDate, dataType, []);
         }
         else if(val === "MTD") {
             let startDate = moment().startOf('month').format(dateFormat);
             let endDate = moment(new Date()).format(dateFormat);
             let dataType = this.state.myDataActive === true ? 1 : 0;
-            this.getMyData(startDate, endDate, dataType);
+            this.getMyData(startDate, endDate, dataType, []);
         }
         else if(val === "Last Month") {
             let startDate = moment(new Date()).add(-1,'days').startOf('month').format(dateFormat);
             let endDate = moment(new Date()).add(-1,'days').endOf('month').format(dateFormat);
             let dataType = this.state.myDataActive === true ? 1 : 0;
-            this.getMyData(startDate, endDate, dataType);
+            this.getMyData(startDate, endDate, dataType, []);
         }
     }
 

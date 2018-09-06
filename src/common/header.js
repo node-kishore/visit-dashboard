@@ -17,7 +17,7 @@ class Header extends Component {
         return (
             <header className="main_header">
                 <div className="logo">
-                    <a href="/dashboard"><img src={IMAGE.logo} alt="" /></a>
+                    <Link to="/dashboard"><img src={IMAGE.logo} alt="" /></Link>
                 </div>
                 <div className="header_right_profile">
                     <Dropdown id="dropdown-custom-1">

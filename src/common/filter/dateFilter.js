@@ -407,6 +407,26 @@ class DateFilter extends React.Component {
             }
             this.props.onUpdateDate(toTransferDate);
         }
+        else if(val === 9) {
+            monthNumberSelected = val;
+            this.setState({
+                monthSelected: val
+            })
+            let toTransferDate = {
+                monthSelected: val
+            }
+            this.props.onUpdateDate(toTransferDate);
+        }
+        else if(val === 12) {
+            monthNumberSelected = val;
+            this.setState({
+                monthSelected: val
+            })
+            let toTransferDate = {
+                monthSelected: val
+            }
+            this.props.onUpdateDate(toTransferDate);
+        }
     }
 
     componentDidMount() {
@@ -492,22 +512,13 @@ class DateFilter extends React.Component {
                 <ul>
                     {/* onlyMonthsFilter={this.props.onlyMonthsFilter} */}
                     <li className={(this.props.onlyMonthsFilter !== "true" ? "hidden" : "")}>
-                        <button className={"filter_btn" + (this.state.monthSelected === 1 ? " active" : "")} onClick={() => this.updateState(1)}>1 Month</button>
-                    </li>
-                    <li className={(this.props.onlyMonthsFilter !== "true" ? "hidden" : "")}>
-                        <button className={"filter_btn" + (this.state.monthSelected === 2 ? " active" : "")} onClick={() => this.updateState(2)}>2 Months</button>
-                    </li>
-                    <li className={"" + (this.props.onlyMonthsFilter !== "true" ? "hidden" : "")}>
-                        <button className={"filter_btn" + (this.state.monthSelected === 3 ? " active" : "")} onClick={() => this.updateState(3)}>3 Months</button>
-                    </li>
-                    <li className={(this.props.onlyMonthsFilter !== "true" ? "hidden" : "")}>
-                        <button className={"filter_btn" + (this.state.monthSelected === 4 ? " active" : "")} onClick={() => this.updateState(4)}>4 Months</button>
-                    </li>
-                    <li className={(this.props.onlyMonthsFilter !== "true" ? "hidden" : "")}>
-                        <button className={"filter_btn" + (this.state.monthSelected === 5 ? " active" : "")} onClick={() => this.updateState(5)}>5 Months</button>
-                    </li>
-                    <li className={(this.props.onlyMonthsFilter !== "true" ? "hidden" : "")}>
                         <button className={"filter_btn" + (this.state.monthSelected === 6 ? " active" : "")} onClick={() => this.updateState(6)}>6 Months</button>
+                    </li>
+                    <li className={(this.props.onlyMonthsFilter !== "true" ? "hidden" : "")}>
+                        <button className={"filter_btn" + (this.state.monthSelected === 9 ? " active" : "")} onClick={() => this.updateState(9)}>9 Months</button>
+                    </li>
+                    <li className={(this.props.onlyMonthsFilter !== "true" ? "hidden" : "")}>
+                        <button className={"filter_btn" + (this.state.monthSelected === 12 ? " active" : "")} onClick={() => this.updateState(12)}>12 Months</button>
                     </li>
 
 

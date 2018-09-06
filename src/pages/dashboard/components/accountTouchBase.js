@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import moment from 'moment';
-import { withRouter} from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import IMAGE from '../../../common/image';
 import Filter from '../../../common/filter/common_filter';
-import { Bar } from 'react-chartjs-2';
+import { Bar, defaults } from 'react-chartjs-2';
 import axios from 'axios';
 import ENDPOINTS from '../../../common/endpoints';
 const dateFormat = "YYYY-MM-DD";
@@ -15,7 +15,10 @@ const barChartOptions = {
     maintainAspectRatio: false,
     scales: {
         xAxes: [{
-            barPercentage: 0.4
+            barPercentage: 0.4,
+			ticks: {
+                fontSize: 10
+            }
         }]
     }
 }
@@ -119,6 +122,9 @@ class AccountTouchBase extends Component {
 			return elem.id
 		})
 		this.getAccountTouchBaseData(users, e.startDate, e.endDate);
+		this.setState({
+			filterActive: ""
+		})
 	}
 
     render() {

@@ -11,7 +11,14 @@ const doughnutOptions = {
 	legend: {
 		position: 'bottom'
 	},
-    maintainAspectRatio: false
+    maintainAspectRatio: false,
+	scales: {
+        xAxes: [{
+			ticks: {
+                fontSize: 8
+            }
+        }]
+    }
 }
 
 class DailyVisit extends Component {

@@ -4,6 +4,7 @@ import Login from './pages/login/login';
 import Dashboard from './pages/dashboard/dashboard';
 import Timeline from './pages/timeline/timeline';
 import UpdateVisits from './pages/update-visits/updateVisits';
+import Accounts from './pages/accounts/accounts';
 
 const PrivateRoute = ({ component: Component, ...rest }) => (
   <Route
@@ -32,6 +33,7 @@ class RouteComponent extends Component {
                     <PrivateRoute path={process.env.PUBLIC_URL + '/dashboard'} component={Dashboard} />
                     <PrivateRoute path={process.env.PUBLIC_URL + '/timeline'} component={Timeline} />
                     <PrivateRoute path={process.env.PUBLIC_URL + '/update-visits'} component={UpdateVisits} />
+                    <PrivateRoute path={process.env.PUBLIC_URL + '/accounts'} component={Accounts} />
                 </div>
             </Router>
         )

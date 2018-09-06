@@ -43,7 +43,7 @@ function FilterWrap(props) {
                     dateRange={props.dateRange}
                     onlyCustomDate={props.onlyCustomDate}
                     onUpdateDate={(e) => props.updateDate(e)}
-                    disablePreviousDates={this.props.disablePreviousDates} />
+                    disablePreviousDates={props.disablePreviousDates} />
             </div>
         )
     }

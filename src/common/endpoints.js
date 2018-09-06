@@ -8,7 +8,8 @@ const ENDPOINTS = {
     my_data: "https://hdfc.salesgovisits.com/wapi/1/mydata",
     get_subordinates: "https://hdfc.salesgovisits.com/wapi/1/usersubordinates",
     // get_subordinates: "users.json",
-    get_activity: "https://hdfc.salesgovisits.com/wapi/1/myactivity"
+    get_activity: "https://hdfc.salesgovisits.com/wapi/1/myactivity",
+    get_account: "https://hdfc.salesgovisits.com/wapi/1/manageaccount"
 }
 
 export default ENDPOINTS;

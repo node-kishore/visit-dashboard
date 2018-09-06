@@ -660,11 +660,13 @@ h3 {
     background-position: 15px;
     display: flex;
     align-items: center;
+    border-left: solid 2px transparent;
 }
 
 .side_navigation li.active a,
 .side_navigation li:hover a {
     background-color: rgb(5, 53, 101);
+    border-left: solid 2px #fff;
 }
 
 .side_navigation a svg {
@@ -1254,7 +1256,7 @@ button.other_filter_btn.active {
 .activities_list {
     position: relative;
     max-height: 400px;
-    min-height: 400px;
+    min-height: 78vh;
     overflow: auto;
     padding-right: 5px;
     padding-top: 5px;
@@ -1301,7 +1303,7 @@ button.other_filter_btn.active {
 }
 
 .activity_col {
-    width: calc(100% - 200px);
+    max-width: calc(100% - 200px);
 }
 
 .activity_single {
@@ -1332,6 +1334,7 @@ button.other_filter_btn.active {
     height: 40px;
     background-color: #fff;
     border: solid 1px #ddd;
+    margin-left: 20px;
 }
 
 .activity_profile_img svg {
@@ -1358,7 +1361,7 @@ button.other_filter_btn.active {
     cursor: pointer;
 }
 
-.activity_select_wrapper:after {
+/* .activity_select_wrapper:after {
     content: '';
     border-top: 4px solid #0b78af;
     border-right: 4px solid transparent;
@@ -1367,7 +1370,7 @@ button.other_filter_btn.active {
     top: 50%;
     margin-top: -2px;
     right: 11px;
-}
+} */
 
 .infowindow_wrap {
     max-width: 240px;
@@ -1492,7 +1495,7 @@ button.other_filter_btn.active {
     font-size: 16px;
 }
 .breadcrumb li a {
-    font-size: 16px;
+    font-size: 14px;
     font-family: 'psbold';
     color: #8D8D8E;
 }
@@ -1544,4 +1547,142 @@ button.other_filter_btn.active {
 .choose_col input:checked + .choose_label {
     background-color: #0B78AF;
     color: #fff;
+}
+.activity_select_wrapper {
+    margin-left: 10px;
+    display: flex;
+    align-items: center;
+}
+.activity_select_wrapper button {
+    border: 0;
+    background-color: transparent;
+    padding: 0;
+    height: 26px;
+    font-family: 'psbold';
+    font-size: 12px;
+    color: #bbb9b9;
+}
+.activity_select_wrapper button.active,
+.activity_select_wrapper button:hover {
+    color: #0b78af;
+}
+.activity_select_wrapper span {
+    display: inline-block;
+    margin: 0 5px;
+}
+.page_title {
+    display: flex;
+    align-items: center;
+    font-family: 'psbold';
+    font-size: 20px;
+    color: #333;
+    margin: 0 0 20px;
+}
+.page_title svg {
+    width: 20px;
+    margin-right: 8px;
+}
+.page_title svg * {
+    fill: rgb(16, 67, 118);
+}
+.site_btn {
+    background-color: rgb(16, 67, 118);
+    color: #fff;
+    border: 0;
+    padding: 5px 20px;
+    font-size: 16px;
+    border-radius: 30px;
+}
+.account_row_box_header {
+    padding: 20px;
+    border-bottom: dashed 2px #bdbdbd;
+}
+.account_row_box_header ul,
+.account_row_box_body ul {
+    display: flex;
+    text-align: center;
+}
+.account_row_box_header ul li,
+.account_row_box_body ul li {
+    width: 25%;
+}
+.account_row_box_header ul li h3 {
+    font-size: 16px;
+    margin: 0 0 5px;
+    color: #74DCFC;
+}
+.account_row_box_header ul li p,
+.account_row_box_body p {
+    line-height: 20px;
+    margin: 0 0 5px;
+    font-size: 14px;
+}
+.account_row_box_body {
+    display: flex;
+    flex-wrap: wrap;
+}
+.account_row_box_body p {
+    width: 25%;
+    padding-right: 20px;
+    color: rgb(16, 67, 118);
+}
+.account_list_row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 30px;
+}
+.account_checkbox {
+    margin-right: 30px;
+}
+.account_row_box {
+    border-radius: 6px;
+    border-left: solid 5px #74DCFC;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    background-color: #fff;
+}
+.account_row_box_body {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 20px;
+}
+.account_filter {
+    margin-bottom: 20px;
+}
+.account_checkbox input[type="checkbox"],
+.account_checkbox input[type="radio"] {
+    display: none;
+}
+.account_checkbox label {
+    margin: 0;
+    display: block;
+    width: 20px;
+    height: 20px;
+    border: solid 1px #ddd;
+    border-radius: 4px;
+    box-shadow: 0px 0px 5px rgba(0,0,0,0.2);
+    background-size: 12px;
+    background-repeat: no-repeat;
+    background-position: center;
+    cursor: pointer;
+    background-color: #fff;
+}
+.account_checkbox input:checked + label {
+    background-image: url(../images/tick.svg);
+}
+.account_row_box_body p span {
+    color: #333;
+}
+.load_more_btn {
+    border: 0;
+    background-color: #05A8AA;
+    padding: 5px 15px;
+    border-radius: 20px;
+    color: #fff;
+    font-family: 'psbold';
+}
+.load_more_wrapper {
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }

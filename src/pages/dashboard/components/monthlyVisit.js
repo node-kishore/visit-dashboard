@@ -3,6 +3,7 @@ import { withRouter} from 'react-router-dom';
 import Filter from '../../../common/filter/common_filter';
 import IMAGE from '../../../common/image';
 import { Bar } from 'react-chartjs-2';
+// import 'chartjs-plugin-datalabels';
 import axios from 'axios';
 import ENDPOINTS from '../../../common/endpoints';
 
@@ -10,12 +11,32 @@ const barChartOptions = {
 	legend: {
 		position: 'bottom'
 	},
-    maintainAspectRatio: false,
-    scales: {
-        xAxes: [{
+	maintainAspectRatio: false,
+	scales: {
+		yAxes: [{
+			id: 'A',
+			type: 'linear',
+			position: 'left',
+		}, {
+			id: 'B',
+			type: 'linear',
+			position: 'right',
+			ticks: {
+				max: 20,
+				min: 0
+			}
+		}],
+		xAxes: [{
             barPercentage: 0.4
         }]
-    }
+	},
+	// plugins: {
+   	// 	datalabels: {
+    //   		display: true,
+    //   		color: '#000',
+	// 		align: 'end'
+   	// 	}
+	// }
 }
 
 class MonthlyVisit extends Component {

@@ -64,7 +64,7 @@ class Sidebar extends Component {
                             Timeline
                         </Link>
                     </li>
-                    <li>
+                    <li className={"overview" + (window.location.pathname === '/update-visits' ? " active" : "")}>
                         <Link to="/update-visits">
                             <svg version="1.1" id="Capa_1" x="0px" y="0px"
                             	 viewBox="0 0 477.867 477.867" style={{enableBackground: "new 0 0 477.867 477.867"}}>
@@ -90,8 +90,8 @@ class Sidebar extends Component {
                             Update Visits
                         </Link>
                     </li>
-                    <li>
-                        <Link to="#">
+                    <li className={"overview" + (window.location.pathname === '/accounts' ? " active" : "")}>
+                        <Link to="/accounts">
                             <svg version="1.1" id="Layer_1" x="0px" y="0px"
                             	 viewBox="0 0 511.999 511.999" style={{enableBackground: "new 0 0 511.999 511.999"}}>
                                 <g>

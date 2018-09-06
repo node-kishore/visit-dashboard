@@ -120,7 +120,8 @@ class UserFilter extends React.Component {
 
     getAllSubordinates() {
         this.setState({
-            userLoading: true
+            userLoading: true,
+            treeData: []
         })
         let axiosConfig = {
             headers: {
