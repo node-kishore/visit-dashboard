@@ -30,7 +30,8 @@ class AccountTouchBase extends Component {
         this.state = {
             accountTouchBaseData: {},
 			filterActive: "Last 10 Days",
-			loading: false
+			loading: false,
+			selectedUsers: []
         }
     }
 
@@ -95,35 +96,38 @@ class AccountTouchBase extends Component {
 		this.setState({
 			filterActive: val
 		})
+		console.log(this.state.selectedUsers);
 		if(val === "Today") {
             let startDate = moment(new Date()).format(dateFormat);
             let endDate = moment(new Date()).format(dateFormat);
-            this.getAccountTouchBaseData(this.state.users, startDate, endDate);
+            this.getAccountTouchBaseData(this.state.selectedUsers.length <= 0 ? this.state.users : this.state.selectedUsers, startDate, endDate);
         }
         else if(val === "Yesterday") {
             let startDate = moment(new Date()).add(-1,'days').format(dateFormat);
             let endDate = moment(new Date()).add(-1,'days').format(dateFormat);
-            this.getAccountTouchBaseData(this.state.users, startDate, endDate);
+            this.getAccountTouchBaseData(this.state.selectedUsers.length <= 0 ? this.state.users : this.state.selectedUsers, startDate, endDate);
         }
         else if(val === "Last 7 Days") {
             let startDate = moment(new Date()).add(-6,'days').format(dateFormat);
             let endDate = moment(new Date()).format(dateFormat);
-            this.getAccountTouchBaseData(this.state.users, startDate, endDate);
+            this.getAccountTouchBaseData(this.state.selectedUsers.length <= 0 ? this.state.users : this.state.selectedUsers, startDate, endDate);
         }
         else if(val === "Last 10 Days") {
             let startDate = moment(new Date()).add(-9,'days').format(dateFormat);
             let endDate = moment(new Date()).format(dateFormat);
-            this.getAccountTouchBaseData(this.state.users, startDate, endDate);
+            this.getAccountTouchBaseData(this.state.selectedUsers.length <= 0 ? this.state.users : this.state.selectedUsers, startDate, endDate);
         }
 	}
 
 	filterAccountTouchBase(e) {
+		console.log(e);
 		let users = e.selectedUsers.map((elem) => {
 			return elem.id
 		})
 		this.getAccountTouchBaseData(users, e.startDate, e.endDate);
 		this.setState({
-			filterActive: ""
+			filterActive: "",
+			selectedUsers: users
 		})
 	}
 
