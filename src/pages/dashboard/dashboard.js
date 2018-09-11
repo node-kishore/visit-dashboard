@@ -9,6 +9,27 @@ import VisitType from './components/visitTypeContribution';
 import NoteType from './components/noteTypeContribution';
 import VisitMap from './components/visitsMap';
 
+function geoFindMe() {
+    var output = document.getElementById("allow_location");
+    if (!navigator.geolocation){
+        alert("Geolocation is not supported by your browser");
+        return;
+    }
+    function success(position) {
+        var latitude  = position.coords.latitude;
+        var longitude = position.coords.longitude;
+        output.style.display = "none";
+    }
+    function error() {
+        output.style.display = "none";
+    }
+    output.style.display = "flex";
+    setTimeout(() => {
+        output.style.backgroundColor = "rgba(0,0,0,0.8)";
+    })
+    navigator.geolocation.getCurrentPosition(success, error);
+}
+
 class Dashboard extends Component {
 
     constructor(props) {
@@ -29,19 +50,22 @@ class Dashboard extends Component {
         this.setState({ filterOpened: !this.state.filterOpened })
     }
 
-    componentDidMount() { }
+    componentDidMount() {
+        // this.getCurrentGeoLocation();
+        geoFindMe();
+    }
 
     componentWillUnmount() {
-        this.setState({
-            filterOpened: false,
-            trendsData: {},
-            visitTypeContributionData: {},
-            noteTypeData: {},
-            userwisecountData: {},
-            accountTouchBaseData: {},
-            mapMarkers: {},
-            filterType: ""
-        })
+        // this.setState({
+        //     filterOpened: false,
+        //     trendsData: {},
+        //     visitTypeContributionData: {},
+        //     noteTypeData: {},
+        //     userwisecountData: {},
+        //     accountTouchBaseData: {},
+        //     mapMarkers: {},
+        //     filterType: ""
+        // })
     }
 
     render() {
@@ -57,6 +81,10 @@ class Dashboard extends Component {
                     <div className="content_area">
 
                         <div className="row">
+
+                            <div className="allow_location" id="allow_location" style={{display: 'none'}}>
+                                <h3>Please allow us to fetch your current location</h3>
+                            </div>
 
                             <MyDataTeamData />
 

@@ -7,45 +7,37 @@ import { Bar } from 'react-chartjs-2';
 import axios from 'axios';
 import ENDPOINTS from '../../../common/endpoints';
 
-const barChartOptions = {
-	legend: {
-		position: 'bottom'
-	},
-	maintainAspectRatio: false,
-	scales: {
-		yAxes: [{
-			id: 'A',
-			type: 'linear',
-			position: 'left',
-		}, {
-			id: 'B',
-			type: 'linear',
-			position: 'right',
-			ticks: {
-				max: 20,
-				min: 0
-			}
-		}],
-		xAxes: [{
-            barPercentage: 0.4
-        }]
-	},
-	// plugins: {
-   	// 	datalabels: {
-    //   		display: true,
-    //   		color: '#000',
-	// 		align: 'end'
-   	// 	}
-	// }
-}
-
 class MonthlyVisit extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
             userwisecountData: {},
-			loading: false
+			loading: false,
+			barChartOptions: {
+				legend: {
+					position: 'bottom'
+				},
+				maintainAspectRatio: false,
+				scales: {
+					yAxes: [{
+						id: 'A',
+						type: 'linear',
+						position: 'left',
+					}, {
+						id: 'B',
+						type: 'linear',
+						position: 'right',
+						ticks: {
+							max: 20,
+							min: 0
+						}
+					}],
+					xAxes: [{
+			            barPercentage: 0.4
+			        }]
+				}
+			}
         }
     }
 
@@ -91,9 +83,34 @@ class MonthlyVisit extends Component {
 					response.labels = response.labels.map(elem => {
 						return elem.split(" ")[1] + " " + elem.split(" ")[2]
 					})
+					// console.log(Math.max(...response.datasets[0].data));
 	                this.setState({
 						loading: false,
-	                    userwisecountData: response
+	                    userwisecountData: response,
+						barChartOptions: {
+							legend: {
+								position: 'bottom'
+							},
+							maintainAspectRatio: false,
+							scales: {
+								yAxes: [{
+									id: 'A',
+									type: 'linear',
+									position: 'left',
+								}, {
+									id: 'B',
+									type: 'linear',
+									position: 'right',
+									ticks: {
+										max: Math.max(...response.datasets[0].data) + 5,
+										min: 0
+									}
+								}],
+								xAxes: [{
+						            barPercentage: 0.4
+						        }]
+							}
+						}
 	                })
 				}
             })
@@ -123,7 +140,7 @@ class MonthlyVisit extends Component {
                     </div>
                     <div className="chart_body position_relative">
 						<div className={"loader_wrap" + (this.state.loading === true ? "" : " hidden")}><img src={IMAGE.loader} alt="" /></div>
-                        <Bar data={this.state.userwisecountData} options={barChartOptions} />
+                        <Bar data={this.state.userwisecountData} options={this.state.barChartOptions} />
                     </div>
                 </div>
             </div>

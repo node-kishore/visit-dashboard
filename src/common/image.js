@@ -18,6 +18,8 @@ import finger_touching_screen from '../images/finger_touching_screen.svg';
 import house_visiting from '../images/house_visiting.svg';
 import salesgoLogo from '../images/salesgo_logo.png';
 import loader_img from '../images/loading.svg';
+import plus from '../images/plus.svg';
+import minus from '../images/minus.svg';
 
 const IMAGE = {
     home_ico_blue: home_ico_blue,
@@ -39,7 +41,9 @@ const IMAGE = {
     finger_touching_screen: finger_touching_screen,
     house_visiting: house_visiting,
     salesgoLogo: salesgoLogo,
-    loader_img: loader_img
+    loader_img: loader_img,
+    plus: plus,
+    minus: minus
 }
 
 export default IMAGE;

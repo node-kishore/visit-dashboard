@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import IMAGE from '../../common/image';
+import ENDPOINTS from '../../common/endpoints';
 
 class Login extends Component {
 
@@ -13,6 +14,7 @@ class Login extends Component {
         }
         localStorage.removeItem("authToken");
         localStorage.removeItem("userData");
+        localStorage.removeItem("visitData");
     }
 
     doSignin(e) {
@@ -26,19 +28,20 @@ class Login extends Component {
             username: this.state.username,
             password: this.state.password
         }
-        axios.post("https://hdfc.salesgovisits.com/wapi/1/wlogin", req)
+        axios.post(ENDPOINTS.login, req)
             .then(res => {
                 console.log(res);
                 this.setState({
                     loginLoading: false
                 })
-                if(res.data.status === "200") {
+                if(res.data.session_id && res.data.session_id != "") {
                     let userData = {
                         user_name: res.data.user_name,
                         user_id: res.data.user_id
                     }
                     localStorage.setItem("authToken", res.data.session_id);
                     localStorage.setItem("userData", JSON.stringify(userData));
+                    localStorage.setItem("visitData", JSON.stringify(res.data));
                     setTimeout(() => {
                         this.props.history.push('/dashboard');
                     })
