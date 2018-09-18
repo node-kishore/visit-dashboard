@@ -45,11 +45,13 @@ class UpdateVisits extends Component {
         this.state = {
             visitType: [],
             noteType: [],
-            meetingRemarks: [],
-            meetingDate: "",
+            meetingRemarks: "",
+            nextVisitDate: moment().add(1, 'days'),
             captureFields: [],
             updateSuccess: false,
-            updateFailure: false
+            updateFailure: false,
+            hasNextVisitChoosed: false,
+            visitUpdating: false
         }
         this.handleChange = this.handleChange.bind(this);
         geoFindMe = geoFindMe.bind(this);
@@ -70,9 +72,43 @@ class UpdateVisits extends Component {
                 })
             }
             this.generateCaptureForm(visitData.capture_fields);
-            geoFindMe();
+            this.geoFindMe();
         }
         console.log(this.props.location);
+    }
+
+    geoFindMe() {
+        let _this = this;
+        if (!navigator.geolocation){
+            alert("Geolocation is not supported by your browser");
+            return;
+        }
+        function success(position) {
+            var latitude  = position.coords.latitude;
+            var longitude = position.coords.longitude;
+            if(_this._isMounted === true) {
+                _this.setState({
+                    latitude: latitude,
+                    longitude: longitude
+                })
+            }
+            // console.log(_this.state);
+            // output.style.display = "none";
+        }
+        function error() {
+            // output.style.display = "none";
+            if(_this._isMounted === true) {
+                _this.setState({
+                    latitude: null,
+                    longitude: null
+                })
+            }
+        }
+        // output.style.display = "flex";
+        // setTimeout(() => {
+            // output.style.backgroundColor = "rgba(0,0,0,0.8)";
+        // })
+        navigator.geolocation.getCurrentPosition(success, error);
     }
 
     componentWillUnmount() {
@@ -114,8 +150,10 @@ class UpdateVisits extends Component {
     }
 
     handleDateChange(date) {
+        console.log(moment(date));
         this.setState({
-            meetingDate: date
+            nextVisitDate: moment(date),
+            hasNextVisitChoosed: true
         })
     }
 
@@ -124,10 +162,7 @@ class UpdateVisits extends Component {
         let filterAllItems = allItems.filter(elem => {
             return elem.groupTitle === item.groupTitle
         });
-        for(let i of allItems) {
-            i.accordionOpened = false
-        }
-        filterAllItems[0].accordionOpened = true;
+        filterAllItems[0].accordionOpened = !filterAllItems[0].accordionOpened;
         this.setState({
             captureFields: allItems
         })
@@ -135,16 +170,145 @@ class UpdateVisits extends Component {
         // console.log(allItems);
     }
 
-    updateNoteVisitType(e) {
-        this.setState({
-            [e.target.name]: e.target.value
+    updateNoteVisitType(e, type, item) {
+        if(type === "visit_type") {
+            let account_type = this.state.visitType.map(function(el) {
+                var o = Object.assign({}, el);
+                // console.log(el.id + "===" + account.id);
+                if(el.id === item.id) {
+                    o.checked = e.target.checked;
+                }
+                return o;
+            })
+            this.setState({
+                visitType: account_type,
+                gr1_valid: false
+            })
+        }
+        if(type === "note_type") {
+            let account_type = this.state.noteType.map(function(el) {
+                var o = Object.assign({}, el);
+                // console.log(el.id + "===" + account.id);
+                if(el.id === item.id) {
+                    o.checked = e.target.checked;
+                }
+                return o;
+            })
+            this.setState({
+                noteType: account_type,
+                gr2_valid: false
+            })
+        }
+    }
+
+    checkValidation() {
+        let isError = false;
+
+        let visitTypeCount = this.state.visitType.filter((elem) => {
+            return elem.checked === true
         })
+        let noteTypeCount = this.state.noteType.filter((elem) => {
+            return elem.checked === true
+        })
+
+        console.log(this.state.noteType);
+
+        if(visitTypeCount.length <= 0) {
+            this.setState({
+                gr1_valid: true
+            })
+            isError = true;
+        }
+        else {
+            this.setState({
+                gr1_valid: false
+            })
+            isError = false;
+        }
+        if(noteTypeCount.length <= 0) {
+            this.setState({
+                gr2_valid: true
+            })
+            isError = true;
+        }
+        else {
+            this.setState({
+                gr2_valid: false
+            })
+            isError = false;
+        }
+        if(this.state.meetingRemarks == "") {
+            this.setState({
+                meetingRemarks_valid: true
+            })
+            isError = true;
+        }
+        else {
+            this.setState({
+                meetingRemarks_valid: false
+            })
+            isError = false;
+        }
+        if(JSON.parse(localStorage.getItem("visitData")).nextVisitDate_skp_btn_visibility === "no") {
+            if(this.state.hasNextVisitChoosed === false) {
+                this.setState({
+                    next_visit_error: true
+                })
+                isError = true;
+            }
+            else {
+                this.setState({
+                    next_visit_error: false
+                })
+                isError = false;
+            }
+        }
+
+        let modifiedCaptureForm = [];
+
+        for(let captureField of this.state.captureFields) {
+            captureField.accordionOpened = true;
+            modifiedCaptureForm.push(captureField);
+            for(let field of captureField.fields) {
+                if(field.is_mandatory === 'y') {
+                    if(this.state[field.field_name] === "") {
+                        this.setState({
+                            [field.field_name + "_error"]: true
+                        })
+                        isError = true
+                    }
+                    else {
+                        this.setState({
+                            [field.field_name + "_error"]: false
+                        })
+                        isError = false
+                    }
+                }
+            }
+        }
+
+        this.setState({
+            captureFields: modifiedCaptureForm
+        })
+
+        return isError;
     }
 
     doUpdateVisit(accountIdList, starTypeId, starTypeDict) {
+        let captureNotValid = this.checkValidation();
+        let visitTypeIds = this.state.visitType.filter(elem => {
+            return elem.checked && elem.checked === true
+        }).map(elem => {
+            return elem.id
+        })
+        let noteTypeIds = this.state.noteType.filter(elem => {
+            return elem.checked && elem.checked === true
+        }).map(elem => {
+            return elem.id
+        })
         let req = {
-            VisitTypeId: this.state.gr1,
-            NoteTypeId: this.state.gr2,
+            VisitTypeId: visitTypeIds.join(","),
+            NoteTypeId: noteTypeIds.join(","),
             NoteRemark: this.state.meetingRemarks,
             capture: this.state.attend_meeting === "on" ? "yes" : "no",
             meeting_rating: this.state.meeting_rating,
@@ -183,34 +347,60 @@ class UpdateVisits extends Component {
                 "wtoken": localStorage.getItem("authToken"),
             }
         };
-        axios.post(ENDPOINTS.update_visit, req, axiosConfig)
-            .then((res) => {
-                console.log(res);
-                if(res.data.status && res.data.status === "1") {
-                    this.setState({
-                        updateSuccess: true,
-                        updateFailure: false
-                    })
-                }
-                else {
-                    this.setState({
-                        updateSuccess: false,
-                        updateFailure: true
-                    })
-                }
+        if(captureNotValid === false) {
+            this.setState({
+                visitUpdating: true
             })
-    }
-
-    activateNextVisitDate() {
-        this.setState({
-            meetingDate: moment(new Date()).add(1, 'days')
-        })
+            axios.post(ENDPOINTS.update_visit, req, axiosConfig)
+                .then((res) => {
+                    // console.log(res);
+                    this.setState({
+                        visitUpdating: true
+                    })
+                    if(res.data.status && res.data.status === "1") {
+                        this.setState({
+                            updateSuccess: true,
+                            updateFailure: false
+                        })
+                    }
+                    else {
+                        this.setState({
+                            updateSuccess: false,
+                            updateFailure: true
+                        })
+                    }
+                })
+        }
     }
 
     closePopup() {
         this.setState({
             updateSuccess: false,
             updateFailure: false
+        })
+        this.props.history.push({
+            pathname: '/accounts',
+            state: { }
+        })
+    }
+
+    redirectToReminder() {
+        this.props.history.push({
+            pathname: '/set-reminder',
+            state: {
+                account: this.props.location.state.account,
+                starId: this.props.location.state.starId
+            }
+        })
+    }
+
+    redirectToTodo() {
+        this.props.history.push({
+            pathname: '/todo',
+            state: {
+                account: this.props.location.state.account,
+                starId: this.props.location.state.account
+            }
         })
     }
 
@@ -245,12 +435,13 @@ class UpdateVisits extends Component {
                     <Sidebar />
 
                     <div className="content_area update_visit_content">
+                        <form>
                         <div className="update_visit_wrapper">
                             <div className="update_visit_left">
                                 <ol className="breadcrumb">
-                                    <li className="active"><a href="#">Update Meeting</a></li>
-                                    <li><a href="#">Set Reminder</a></li>
-                                    <li><a href="#">Todos</a></li>
+                                    <li className="active"><a href="javascript:void(0);">Update Meeting</a></li>
+                                    <li><a href="javascript:void(0);" onClick={this.redirectToReminder.bind(this)}>Set Reminder</a></li>
+                                    {/*<li><a href="javascript:void(0);" onClick={this.redirectToTodo.bind(this)}>Todos</a></li>*/}
                                 </ol> {/* breadcrumb */}
                                 <div className="row">
                                     <div className="col-md-12">
@@ -279,14 +470,15 @@ class UpdateVisits extends Component {
                                                     <div key={index} className="col-md-4 mb-10px choose_col choose_col_3">
                                                         <input
                                                             value={item.id}
-                                                            type="radio"
+                                                            type="checkbox"
                                                             id={"vt_" + index}
                                                             name="gr1"
-                                                            onChange={this.updateNoteVisitType.bind(this)} />
+                                                            onChange={(e) => this.updateNoteVisitType(e, 'visit_type', item)} />
                                                         <label className="choose_label" htmlFor={"vt_" + index} title={item.type}>{item.type}</label>
                                                     </div>
                                                 ))}
                                             </div>
+                                            {this.state.gr1_valid === true && <div className="field_error">Choose atleast one visit type</div>}
                                         </div> {/*update_group*/}
                                         <div className="update_group mb-30px">
                                             <h3 className="update_group_title">Select Note Type</h3>
@@ -295,14 +487,15 @@ class UpdateVisits extends Component {
                                                     <div key={index} className="col-md-3 choose_col choose_col_4 mb-10px">
                                                         <input
                                                             value={item.id}
-                                                            type="radio"
+                                                            type="checkbox"
                                                             id={"nt_" + index}
                                                             name="gr2"
-                                                            onChange={this.updateNoteVisitType.bind(this)} />
+                                                            onChange={(e) => this.updateNoteVisitType(e, 'note_type', item)} />
                                                         <label className="choose_label" htmlFor={"nt_" + index} title={item.type}>{item.type}</label>
                                                     </div>
                                                 ))}
                                             </div>
+                                            {this.state.gr2_valid === true && <div className="field_error">Choose atleast one note type</div>}
                                         </div> {/*update_group*/}
                                         <div className="update_group mb-30px">
                                             <h3 className="update_group_title">Meeting Remarks</h3>
@@ -316,6 +509,7 @@ class UpdateVisits extends Component {
                                                         className="meeting_remarks_control">
                                                     </textarea>
                                                     <div className="remarks_info">{this.state.meetingRemarks.length}/500 Words</div>
+                                                    {this.state.meetingRemarks_valid === true && this.state.meetingRemarks === "" && <div className="field_error" style={{marginTop: "-22px"}}>Above field is required</div>}
                                                 </div>
                                             </div>
                                         </div> {/*update_group*/}
@@ -323,7 +517,7 @@ class UpdateVisits extends Component {
                                             <div className="row update_group_controls">
                                                 <div className="col-md-12 attend_meeting_check">
                                                     <input
-                                                        onChange={this.updateNoteVisitType.bind(this)}
+                                                        onChange={this.handleChange.bind(this)}
                                                         name="attend_meeting"
                                                         type="checkbox"
                                                         id="attend_meeting" />
@@ -333,7 +527,11 @@ class UpdateVisits extends Component {
                                         </div> {/*update_group*/}
                                         <div className="update_group">
                                             <div className="text-center">
-                                                <button onClick={this.doUpdateVisit.bind(this)} className="update_meeting_btn">Update Meeting</button>
+                                                <button
+                                                    type="button"
+                                                    onClick={this.doUpdateVisit.bind(this)}
+                                                    className="update_meeting_btn"
+                                                    disabled={this.state.visitUpdating === true ? true : false}>{this.state.visitUpdating === true ? "Updating..." : "Update Meeting"}</button>
                                             </div>
                                         </div>
                                     </div> {/* col-md-12 */}
@@ -345,11 +543,14 @@ class UpdateVisits extends Component {
                                     <DatePicker
                                         minDate={moment().add(1, 'days')}
                                         inline
+                                        timeIntervals={5}
+                                        dateFormat="LT"
+                                        showTimeSelect
                                         selected={this.state.nextVisitDate}
                                         onChange={this.handleDateChange.bind(this)} />
-                                    {moment(this.state.nextVisitDate).format("DD-MM-YYYY")}
+                                    {this.state.next_visit_error === true && this.state.hasNextVisitChoosed === false && <div className="field_error">Choose a Date and Time</div>}
                                 </div>
-                                <div className="capture_form_wrap">
+                                {JSON.parse(localStorage.getItem('visitData')).captureForm_screen_visibility === "yes" && <div className="capture_form_wrap">
                                     <h3 className="update_group_title">Select Capture Form</h3>
                                     <div className="accordion_holder">
                                         {this.state.captureFields.map((item, index) => (
@@ -362,30 +563,33 @@ class UpdateVisits extends Component {
                                                 {item.accordionOpened == true && <div className="accordion_body">
                                                     {item.fields.map((formItem, formIndex) => (
                                                         <div key={formIndex} className="capture_form_row">
-                                                            <label>{formItem.display_name}</label>
+                                                            <label>{formItem.display_name}{formItem.is_mandatory === 'y' && <span>*</span>}</label>
                                                             {formItem.field_type != "dropdown" && <input
                                                                 type={formItem.field_type === "numeric" ? "number" : "text"}
                                                                 value={this.state[formItem.field_name]}
                                                                 onChange={this.handleChange}
-                                                                name={"" + (formItem.field_name)} />}
+                                                                name={"" + (formItem.field_name)}
+                                                                 />}
                                                             {formItem.field_type === "dropdown" && <select
                                                                                                         onChange={this.handleChange}
                                                                                                         value={this.state[formItem.field_name]}
                                                                                                         name={"" + (formItem.field_name)}>
-                                                                <option>Choose</option>
+                                                                <option value="">Choose</option>
                                                                 {formItem.option_list.map((optionItem, optionIndex) => (
                                                                     <option key={optionIndex} value={optionItem}>{optionItem}</option>
                                                                 ))}
                                                             </select>}
+                                                            {formItem.is_mandatory === 'y' && this.state[formItem.field_name+'_error'] === true && this.state[formItem.field_name] === "" && <div className="field_error">Above field is mandatory</div>}
                                                         </div>
                                                     ))}
                                                 </div>}
                                             </div>
                                         ))}
                                     </div>
-                                </div>
+                                </div>}
                             </div> {/* update_visit_left */}
                         </div> {/* update_visit_wrapper */}
+                        </form>
                     </div> {/* content_area */}
 
                 </div>

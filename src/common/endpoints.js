@@ -14,7 +14,8 @@ const ENDPOINTS = {
     login: BASE_PATH + "wapi/1/wlogin",
     update_visit: BASE_PATH + "wapi/1/web_visit",
     my_team_report: BASE_PATH + "wapi/1/myteam_report",
-    my_team_account: BASE_PATH + "wapi/1/subordinate_accounts"
+    my_team_account: BASE_PATH + "wapi/1/subordinate_accounts",
+    next_visit: BASE_PATH + "wapi/1/web_next_visit"
 }
 
 export default ENDPOINTS;

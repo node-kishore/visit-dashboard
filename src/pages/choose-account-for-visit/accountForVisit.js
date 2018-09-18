@@ -7,32 +7,6 @@ import DatePicker from 'react-datepicker';
 import axios from 'axios';
 import ENDPOINTS from '../../common/endpoints';
 
-function updateVisitData(e, account) {
-    let accountList = this.state.accounts.map(function(el) {
-        var o = Object.assign({}, el);
-        // console.log(el.id + "===" + account.id);
-        if(el.id === account.id) {
-            o.checked = true;
-        }
-        return o;
-    })
-    let allAaccountList = this.state.allAccounts.map(function(el) {
-        var o = Object.assign({}, el);
-        // console.log(el.id + "===" + account.id);
-        if(el.id === account.id) {
-            o.checked = true;
-        }
-        return o;
-    })
-    let countChecked = allAaccountList.filter((el) => {
-        return el.checked && el.checked === true
-    })
-    this.setState({
-        accounts: accountList,
-        allAccounts: allAaccountList
-    })
-}
-
 function AccountList(props) {
     return (
         <div className="account_list_row">
@@ -41,7 +15,7 @@ function AccountList(props) {
                     checked={props.account.checked === undefined ? false : props.account.checked}
                     type="checkbox"
                     id={"acc_" + props.account.id}
-                    onChange={(e) => updateVisitData(e, props.account)} />
+                    onChange={(e) => props.updateVisitData(e, props.account)} />
                 <label htmlFor={"acc_" + props.account.id}></label>
             </div>}
             <div className="account_row_box">
@@ -95,17 +69,22 @@ class ChooseAccount extends Component {
             accountSearch_val: "",
             showUpdateBtn: false
         }
-        updateVisitData = updateVisitData.bind(this);
         // redirectToVisit = redirectToVisit.bind(this);
     }
 
     componentDidMount() {
-        this.setState({
-            allAccounts: JSON.parse(localStorage.getItem("visitData")).accounts
-        })
+        this._isMounted = true;
+        if(this._isMounted) {
+            this.setState({
+                allAccounts: JSON.parse(localStorage.getItem("visitData")).accounts
+            })
+        }
+        console.log(this._isMounted);
     }
 
-    componentWillUnmount() { }
+    componentWillUnmount() {
+        this._isMounted = false;
+    }
 
     doSearch(e) {
         this.setState({
@@ -136,6 +115,34 @@ class ChooseAccount extends Component {
                 account: checkedAccounts
             }
         })
+    }
+
+    updateVisitData(e, account) {
+        let accountList = this.state.accounts.map(function(el) {
+            var o = Object.assign({}, el);
+            // console.log(el.id + "===" + account.id);
+            if(el.id === account.id) {
+                o.checked = e.target.checked;
+            }
+            return o;
+        })
+        let allAaccountList = this.state.allAccounts.map(function(el) {
+            var o = Object.assign({}, el);
+            // console.log(el.id + "===" + account.id);
+            if(el.id === account.id) {
+                o.checked = e.target.checked;
+            }
+            return o;
+        })
+        let countChecked = allAaccountList.filter((el) => {
+            return el.checked && el.checked === true
+        })
+        if(this._isMounted) {
+            this.setState({
+                accounts: accountList,
+                allAccounts: allAaccountList
+            })
+        }
     }
 
     render() {
@@ -181,7 +188,7 @@ class ChooseAccount extends Component {
                                 </div>}
                                 {this.state.accounts.length >= 0 && <div className="choose_account_wrap">
                                     {this.state.accounts.map((item, index) => (
-                                        <AccountList account={item} onRedirect={this.redirectTo.bind(this)} key={index} />
+                                        <AccountList updateVisitData={(e, account) => this.updateVisitData(e, account)} account={item} onRedirect={this.redirectTo.bind(this)} key={index} />
                                     ))}
                                 </div>}
                                 {this.state.allAccounts.filter(el => {

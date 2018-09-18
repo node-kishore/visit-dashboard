@@ -1668,9 +1668,22 @@ button.other_filter_btn.active {
     background-position: center;
     cursor: pointer;
     background-color: #fff;
+    position: relative;
 }
-.account_checkbox input:checked + label {
+.account_checkbox input[type="radio"] + label {
+    border-radius: 50%;
+}
+.account_checkbox input[type="checkbox"]:checked + label {
     background-image: url(../images/tick.svg);
+}
+.account_checkbox input[type="radio"]:checked + label:after {
+    content: '';
+    width: 10px;
+    height: 10px;
+    margin: 4px;
+    background-color: rgb(16, 67, 118);
+    display: block;
+    border-radius: 50%;
 }
 .account_row_box_body p span {
     color: #333;
@@ -1708,6 +1721,13 @@ button.other_filter_btn.active {
     font-family: 'psbold';
     padding: 10px 30px;
     border-radius: 40px;
+}
+.update_meeting_btn[disabled],
+.update_meeting_btn[disabled="true"],
+.site_btn[disabled],
+.site_btn[disabled="true"] {
+    background-color: #ddd;
+    cursor: no-drop;
 }
 .group_title {
     font-size: 16px;
@@ -1757,7 +1777,7 @@ button.other_filter_btn.active {
     width: 100%;
 }
 .visit_date .react-datepicker__month-container {
-    width: 100%;
+    width: calc(100% - 70px);
 }
 .visit_date .react-datepicker__day-name,
 .visit_date .react-datepicker__day,
@@ -1920,4 +1940,8 @@ button.other_filter_btn.active {
     padding: 10px 30px;
     border-radius: 40px;
     color: #fff;
+}
+.field_error {
+    color: #f00;
+    font-size: 12px;
 }

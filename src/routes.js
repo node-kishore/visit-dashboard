@@ -8,6 +8,7 @@ import Accounts from './pages/accounts/accounts';
 import Reports from './pages/reports/reports';
 import CampaignAccounts from './pages/campaign-accounts/campaign-accounts';
 import ChooseAccount from './pages/choose-account-for-visit/accountForVisit';
+import Reminder from './pages/reminder/reminder';
 
 const PrivateRoute = ({ component: Component, ...rest }) => (
   <Route
@@ -40,6 +41,7 @@ class RouteComponent extends Component {
                     <PrivateRoute path={process.env.PUBLIC_URL + '/reports'} component={Reports} />
                     <PrivateRoute path={process.env.PUBLIC_URL + '/campaign-accounts'} component={CampaignAccounts} />
                     <PrivateRoute path={process.env.PUBLIC_URL + '/choose-accounts'} component={ChooseAccount} />
+                    <PrivateRoute path={process.env.PUBLIC_URL + '/set-reminder'} component={Reminder} />
                 </div>
             </Router>
         )

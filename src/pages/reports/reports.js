@@ -5,6 +5,8 @@ import Sidebar from '../../common/sidebar';
 import axios from 'axios';
 import ENDPOINTS from '../../common/endpoints';
 import IMAGE from '../../common/image';
+import ReactTable from "react-table";
+import 'react-table/react-table.css'
 
 function updateVisitData(e, account) {
     // console.log(e.target.checked);
@@ -97,7 +99,7 @@ class Reports extends Component {
                 "wtoken": localStorage.getItem("authToken"),
             }
         };
-        axios.get(ENDPOINTS.my_team_report + "?page_no=" + page_number + "&pagination_size=20", axiosConfig)
+        axios.get(ENDPOINTS.my_team_report + "?page_no=" + page_number + "&pagination_size=10000", axiosConfig)
             .then(res => {
 				if(res.data.status && res.data.status == 400) {
                     this.props.history.push('/');
@@ -147,6 +149,35 @@ class Reports extends Component {
     }
 
     render() {
+
+        const data = []
+
+        const columns = [{
+            Header: 'Account Name',
+            accessor: 'account_name'
+        }, {
+            Header: 'Frequency Type',
+            accessor: 'frequency_type'
+        }, {
+            Header: 'Next Visit Date',
+            accessor: 'next_visit_date'
+        }, {
+            Header: 'Note Types',
+            accessor: 'note_types'
+        }, {
+            Header: 'Notes',
+            accessor: 'notes'
+        }, {
+            Header: 'Star Type',
+            accessor: 'star_type'
+        }, {
+            Header: 'Visit Date',
+            accessor: 'visit_date'
+        }, {
+            Header: 'Visit Type',
+            accessor: 'visit_types'
+        }]
+
         return (
             <div>
 
@@ -192,12 +223,20 @@ class Reports extends Component {
                                 </div> {/* account_filter */}
                                 <div className="account_list_wrapper position_relative">
                                     <div className={"loader_wrap" + (this.state.loading === true ? "" : " hidden")}><img src={IMAGE.loader} alt="" /></div>
-                                    {this.state.accounts.map((item, index) => (
+                                    <ReactTable
+                                        filterable
+                                        defaultPageSize={50}
+                                        style={{
+                                            height: "76vh"
+                                        }}
+                                        data={this.state.accounts}
+                                        columns={columns} />
+                                    {/*{this.state.accounts.map((item, index) => (
                                         <AccountList key={index} account={item} />
                                     ))}
                                     {this.state.showLoadMore === true && <div className="text-center load_more_wrapper">
                                         <button type="button" className="load_more_btn" onClick={this.loadMoreAccount.bind(this)}>Load More</button>
-                                    </div>}
+                                    </div>}*/}
                                 </div> {/* account_list_wrapper */}
                             </div>
 

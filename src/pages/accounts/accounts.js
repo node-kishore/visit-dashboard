@@ -7,17 +7,15 @@ import axios from 'axios';
 import ENDPOINTS from '../../common/endpoints';
 import IMAGE from '../../common/image';
 
-function updateVisitData(e, account) {
-    this.setState({
-        account_main: account
-    })
-}
-
 function AccountList(props) {
     return (
         <div className="account_list_row">
             {props.teamAccounts != true && <div className="account_checkbox">
-                <input type="radio" name="rd1" id={"acc_" + props.account.account_id} onChange={(e) => updateVisitData(e, props.account)} />
+                <input
+                    type="radio"
+                    name="rd1"
+                    id={"acc_" + props.account.account_id}
+                    onChange={(e) => props.updateVisitData(e, props.account)} />
                 <label htmlFor={"acc_" + props.account.account_id}></label>
             </div>}
             <div className="account_row_box">
@@ -76,7 +74,7 @@ class Accounts extends Component {
             account: "",
             userSelectedForFilter: []
         }
-        updateVisitData = updateVisitData.bind(this);
+        this._isMounted = false;
     }
 
     getAccount(page_number) {
@@ -116,9 +114,12 @@ class Accounts extends Component {
 
     componentDidMount() {
         this.getAccount(this.state.page_number);
+        this._isMounted = true;
     }
 
-    componentWillUnmount() { }
+    componentWillUnmount() {
+        this._isMounted = false;
+    }
 
     loadMoreAccount() {
         let toBePageNumber = this.state.page_number + 1;
@@ -198,7 +199,7 @@ class Accounts extends Component {
     }
 
     filterAccountTouchBase(e) {
-        console.log(e);
+        // console.log(e);
         let users = e.selectedUsers.map((elem) => {
 			return elem.id
 		})
@@ -207,6 +208,14 @@ class Accounts extends Component {
             existUser: e.allUsers,
             userSelectedForFilter: users
         })
+    }
+
+    updateVisitData(e, account) {
+        if(this._isMounted === true) {
+            this.setState({
+                account_main: account
+            })
+        }
     }
 
     render() {
@@ -266,12 +275,19 @@ class Accounts extends Component {
                                 </div>
                                 {this.state.account_type === "My Accounts" && <div>
                                     <div className="account_filter text-right">
-                                        <button type="button" onClick={this.redirectToVisit.bind(this)} className="site_btn">Update Visits</button>
+                                        <button
+                                            type="button"
+                                            onClick={this.redirectToVisit.bind(this)}
+                                            className="site_btn"
+                                            disabled={this.state.account_main === undefined ? true : false}>{this.state.account_main === undefined ? "Choose One Account" : "Update Visit"}</button>
                                     </div> {/* account_filter */}
                                     <div className="account_list_wrapper position_relative">
                                         <div className={"loader_wrap" + (this.state.loading === true ? "" : " hidden")}><img src={IMAGE.loader} alt="" /></div>
                                         {this.state.accounts.map((item, index) => (
-                                            <AccountList key={index} account={item} />
+                                            <AccountList
+                                                key={index}
+                                                account={item}
+                                                updateVisitData={(e, account) => this.updateVisitData(e, account)} />
                                         ))}
                                         {this.state.accounts.length <= 0 && <div className="text-center">No accounts found</div>}
                                         {this.state.showLoadMore === true && <div className="text-center load_more_wrapper">
@@ -283,7 +299,10 @@ class Accounts extends Component {
                                     <div className="account_list_wrapper position_relative">
                                         <div className={"loader_wrap" + (this.state.loading === true ? "" : " hidden")}><img src={IMAGE.loader} alt="" /></div>
                                         {this.state.accounts.map((item, index) => (
-                                            <AccountList key={index} account={item} teamAccounts={true} />
+                                            <AccountList
+                                                key={index}
+                                                account={item}
+                                                teamAccounts={true}  />
                                         ))}
                                         {this.state.showLoadMore === true && <div className="text-center load_more_wrapper">
                                             <button type="button" className="load_more_btn" onClick={this.loadMoreAccount.bind(this)}>Load More</button>

@@ -7,29 +7,6 @@ import ENDPOINTS from '../../common/endpoints';
 import IMAGE from '../../common/image';
 import _ from 'lodash'
 
-function updateVisitData(e, account) {
-    // console.log(account.id);
-    // console.log(this.state.accounts);
-    if(this._isMounted) {
-        this.setState({
-            account_main: account
-        })
-    }
-    let accountList = this.state.accounts.map(function(el) {
-        var o = Object.assign({}, el);
-        // console.log(el.id + "===" + account.id);
-        if(el.id === account.id) {
-            o.checked = true;
-        }
-        return o;
-    })
-    if(this._isMounted) {
-        this.setState({
-            accounts: accountList
-        })
-    }
-}
-
 function AccountList(props) {
     // console.log(props.account.checked);
     return (
@@ -40,7 +17,7 @@ function AccountList(props) {
                     value="abc"
                     id={"acc_" + props.account.id}
                     checked={props.account.checked === undefined ? false : props.account.checked}
-                    onChange={(e) => updateVisitData(e, props.account)} />
+                    onChange={(e) => props.updateVisitData(e, props.account)} />
                 <label htmlFor={"acc_" + props.account.id}></label>
             </div>}
             <div className="account_row_box">
@@ -97,7 +74,6 @@ class CampaignAccounts extends Component {
             starTypes: [],
             activeTab: ""
         }
-        updateVisitData = updateVisitData.bind(this);
         this._isMounted = false;
     }
 
@@ -168,6 +144,29 @@ class CampaignAccounts extends Component {
         })
     }
 
+    updateVisitData(e, account) {
+        // console.log(account.id);
+        // console.log(this.state.accounts);
+        if(this._isMounted) {
+            this.setState({
+                account_main: account
+            })
+        }
+        let accountList = this.state.accounts.map(function(el) {
+            var o = Object.assign({}, el);
+            // console.log(el.id + "===" + account.id);
+            if(el.id === account.id) {
+                o.checked = true;
+            }
+            return o;
+        })
+        if(this._isMounted) {
+            this.setState({
+                accounts: accountList
+            })
+        }
+    }
+
     render() {
         return (
             <div>
@@ -215,7 +214,7 @@ class CampaignAccounts extends Component {
                                     <div className="account_list_wrapper position_relative">
                                         <div className={"loader_wrap" + (this.state.loading === true ? "" : " hidden")}><img src={IMAGE.loader} alt="" /></div>
                                         {this.state.accounts.map((item, index) => (
-                                            <AccountList key={index} account={item} />
+                                            <AccountList updateVisitData={(e, account) => this.updateVisitData(e, account)} key={index} account={item} />
                                         ))}
                                         {this.state.accounts.length <= 0 && <div className="text-center">No accounts found</div>}
                                         {this.state.showLoadMore === true && <div className="text-center load_more_wrapper">
