@@ -100,6 +100,7 @@ class UserFilter extends React.Component {
             userLoading: false
         }
         checkChilds = checkChilds.bind(this);
+        console.log(this.props);
     }
 
     doSearch(e) {
@@ -129,20 +130,27 @@ class UserFilter extends React.Component {
                 "wtoken": localStorage.getItem("authToken"),
             }
         };
-        axios.get(ENDPOINTS.get_subordinates, axiosConfig)
-            .then(res => {
-                // console.log(res);
-                if(res.data.status && res.data.status == 401) {
-                    this.props.history.push('/');
-                }
-                else {
-                    allUsers = res.data;
-                    this.setState({
-                        treeData: res.data,
-                        userLoading: false
-                    })
-                }
+        if(this.props.existUser != undefined) {
+            this.setState({
+                treeData: this.props.existUser
             })
+        }
+        else {
+            axios.get(ENDPOINTS.get_subordinates, axiosConfig)
+                .then(res => {
+                    // console.log(res);
+                    if(res.data.status && res.data.status == 401) {
+                        this.props.history.push('/');
+                    }
+                    else {
+                        allUsers = res.data;
+                        this.setState({
+                            treeData: res.data,
+                            userLoading: false
+                        })
+                    }
+                })
+        }
     }
 
     componentDidMount() {
@@ -375,20 +383,11 @@ class UserFilter extends React.Component {
                 {this.state.searchValue}*/}
                 <div className="treeview_wrapper">
                     {this.state.userLoading == true && <div style={{paddingLeft: 10}}>Loading...</div>}
-                    <TreeView onDoToggle={(item, toBe) => this.onToggle(item, toBe)} checkAllChild={(e, item) => this.checkChilds(e, item)} treeData={this.state.treeData} />
+                    <TreeView 
+                        onDoToggle={(item, toBe) => this.onToggle(item, toBe)} 
+                        checkAllChild={(e, item) => this.checkChilds(e, item)} 
+                        treeData={this.state.treeData} />
                 </div>
-                {/*<ul className="user_list">
-                    {this.state.users.map((item, index) => (
-                        <li className="indent" key={item.id}>
-                            <input
-                                onChange={(e) => {selectUser(e, item); this.doCheckUser(e, item)}}
-                                type="checkbox"
-                                id={'chk_' + this.props.filterId + "_" + index}
-                                checked={item.checked} />
-                            <label htmlFor={'chk_' + this.props.filterId + "_" + index}>{item.name}</label>
-                        </li>
-                    ))}
-                </ul>*/}
             </div>
         )
     }

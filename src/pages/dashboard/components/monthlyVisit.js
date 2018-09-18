@@ -56,6 +56,9 @@ class MonthlyVisit extends Component {
 			return elem.id
 		})
 		this.getUserWiseCountData(users, e.monthNumberSelected);
+		this.setState({
+			existUser: e.allUsers
+		})
 	}
 
     getUserWiseCountData(users, n_months) {
@@ -130,6 +133,7 @@ class MonthlyVisit extends Component {
                             Monthly Visit Trend
                         </div>
                         <Filter
+							existUser={this.state.existUser}
 							onfilterApply={this.onfilterApply.bind(this)}
 							filterByUser="true"
 							filterByDate="true"

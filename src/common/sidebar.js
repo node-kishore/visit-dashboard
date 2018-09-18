@@ -64,8 +64,8 @@ class Sidebar extends Component {
                             Timeline
                         </Link>
                     </li>
-                    <li className={"overview" + (window.location.pathname === '/update-visits' ? " active" : "")}>
-                        <Link to="/update-visits">
+                    <li className={"overview" + (window.location.pathname === '/update-visits' || window.location.pathname === '/choose-accounts' ? " active" : "")}>
+                        <Link to="/choose-accounts">
                             <svg version="1.1" id="Capa_1" x="0px" y="0px"
                             	 viewBox="0 0 477.867 477.867" style={{enableBackground: "new 0 0 477.867 477.867"}}>
                                 <g>
@@ -116,8 +116,8 @@ class Sidebar extends Component {
                             Accounts
                         </Link>
                     </li>
-                    <li>
-                        <Link to="#">
+                    <li className={"overview" + (window.location.pathname === '/campaign-accounts' ? " active" : "")}>
+                        <Link to="/campaign-accounts">
                             <svg version="1.1" id="Capa_1" x="0px" y="0px"
                             	 viewBox="0 0 213.275 213.275" style={{enableBackground: "new 0 0 213.275 213.275"}}>
                                 <g>
@@ -139,8 +139,8 @@ class Sidebar extends Component {
                         </Link>
                     </li>
                     {/*<li><a href="/dashboard">Import Accounts</a></li>*/}
-                    <li>
-                        <Link to="#">
+                    <li className={"overview" + (window.location.pathname === '/reports' ? " active" : "")}>
+                        <Link to="/reports">
                             <svg version="1.1" id="Capa_1" x="0px" y="0px"
                             	 viewBox="0 0 32 32" style={{enableBackground: "new 0 0 32 32"}}>
                                 <g>

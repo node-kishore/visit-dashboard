@@ -39,7 +39,10 @@ class NoteType extends Component {
 		let users = e.selectedUsers.map((elem) => {
 			return elem.id
 		})
-		this.getNoteTypeData(users, fromDate, toDate);
+        this.getNoteTypeData(users, fromDate, toDate);
+        this.setState({
+			existUser: e.allUsers
+		})
 	}
 
     getNoteTypeData(users, fromDate, toDate) {
@@ -88,6 +91,7 @@ class NoteType extends Component {
                             Note Type Contribution
                         </div>
                         <Filter
+                            existUser={this.state.existUser}
 							onfilterApply={this.onfilterApply.bind(this)}
 							filterByUser="true"
 							filterByDate="true"

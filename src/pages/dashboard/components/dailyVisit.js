@@ -70,7 +70,10 @@ class DailyVisit extends Component {
 		let users = e.selectedUsers.map((elem) => {
 			return elem.id
 		})
-		this.getTrendsData(users);
+        this.getTrendsData(users);
+        this.setState({
+			existUser: e.allUsers
+		})
 	}
 
     componentDidMount() {
@@ -86,6 +89,7 @@ class DailyVisit extends Component {
                             Daily Visit Trend
                         </div>
                         <Filter
+                            existUser={this.state.existUser}
 							onfilterApply={this.onfilterApply.bind(this)}
 							filterByUser="true"
 							filterByDate="false"

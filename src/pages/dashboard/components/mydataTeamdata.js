@@ -16,6 +16,7 @@ function onfilterApply(e) {
 function MyData(props) {
     if(props.myData === true) {
         return <Filter
+                    existUser={props.existUser}
                     onfilterApply={onfilterApply.bind(this)}
                     filterByUser="false"
                     filterByDate="true"
@@ -26,6 +27,7 @@ function MyData(props) {
                     dateRange="No Range" />
     }
     return <Filter
+                    existUser={props.existUser}
                     onfilterApply={onfilterApply.bind(this)}
                     filterByUser="true"
                     filterByDate="true"
@@ -42,7 +44,8 @@ function updateMyData(val) {
         return elem.id
     })
     this.setState({
-        filterActive: ""
+        filterActive: "",
+        existUser: val.allUsers
     })
     this.getMyData(val.startDate, val.endDate, this.state.myDataActive, selectedUser);
 }
@@ -355,7 +358,7 @@ class MyDataTeamData extends Component {
                                 className={"other_filter_btn" + (this.state.filterActive === "Last Month" ? " active" : "")}
                                 onClick={() => this.filterDate("Last Month")}>Last Month</button>
                         </div>
-                        <MyData myData={this.state.myDataActive} onlyCustomDate={true} filterBtnLabel="Custom" />
+                        <MyData myData={this.state.myDataActive} onlyCustomDate={true} filterBtnLabel="Custom" existUser={this.state.existUser} />
                         {/*<CommonFilter filterByUser="true" filterByDate="true" />*/}
                     </div>
                 </div>

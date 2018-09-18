@@ -39,7 +39,10 @@ class VisitType extends Component {
 		let users = e.selectedUsers.map((elem) => {
 			return elem.id
 		})
-		this.getVisitTypeData(users.length <= 0 ? [1] : users, e.startDate, e.endDate);
+        this.getVisitTypeData(users.length <= 0 ? [1] : users, e.startDate, e.endDate);
+        this.setState({
+			existUser: e.allUsers
+		})
 	}
 
     getVisitTypeData(usersIds, fromDate, toDate) {
@@ -88,6 +91,7 @@ class VisitType extends Component {
                             Visit Type Contribution
                         </div>
                         <Filter
+                            existUser={this.state.existUser}
 							onfilterApply={this.onfilterApply.bind(this)}
 							filterByUser="true"
 							filterByDate="true"

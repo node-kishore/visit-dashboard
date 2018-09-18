@@ -1641,6 +1641,7 @@ button.other_filter_btn.active {
     border-left: solid 5px #74DCFC;
     box-shadow: 0 0 10px rgba(0,0,0,0.3);
     background-color: #fff;
+    width: 100%;
 }
 .account_row_box_body {
     display: flex;
@@ -1778,5 +1779,145 @@ button.other_filter_btn.active {
 }
 .allow_location h3 {
     font-size: 20px;
+    color: #fff;
+}
+.select_next_visit {
+    background-color: rgb(16, 67, 118);
+    color: #fff;
+    font-size: 16px;
+    border: 0;
+    width: 100%;
+    padding: 10px 50px;
+    border-radius: 40px;
+}
+.cancel_btn {
+    background-color: #969696;
+    border: 0;
+    padding: 5px 20px;
+    border-radius: 30px;
+    margin-right: 10px;
+    color: #fff;
+}
+.update_visit_btn {
+    background-color: #05A8AA;
+    border: 0;
+    padding: 5px 20px;
+    border-radius: 30px;
+    color: #fff;
+}
+.account_tab {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 35px;
+}
+.account_tab .breadcrumb {
+    margin-bottom: 0;
+}
+.visit_account_search {
+    margin: 30px 0 20px;
+}
+.visit_account_search input {
+    background-image: url('../images/search.svg');
+    background-repeat: no-repeat;
+    background-size: 20px;
+    background-position: 99%;
+    font-size: 16px;
+    padding-right: 30px;
+}
+.search_account_msg {
+    text-align: center;
+    font-size: 24px;
+    line-height: 30px;
+    max-width: 800px;
+    margin: 60px auto;
+    color: #989898;
+    user-select: none;
+    cursor: default;
+}
+.choosed_wrap {
+    border: solid 1px #ddd;
+    border-radius: 4px;
+    padding: 5px 10px 0;
+    background-color: #fff;
+}
+.choosed_box {
+    display: inline-block;
+    background-color: #f1f1f1;
+    padding: 5px 10px;
+    border-radius: 40px;
+    margin: 0 5px 5px 0;
+}
+.choosed_box span {
+    display: inline-block;
+    vertical-align: middle;
+}
+.choosed_box button {
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border: 0;
+    background-color: #ddd;
+    border-radius: 50%;
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 10px;
+}
+.choosed_box button svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+.choose_account_wrap {
+    max-height: calc(69vh);
+    overflow: auto;
+    margin-bottom: 5px;
+}
+.inside_update_visit {
+    text-align: center;
+    margin-bottom: 10px;
+}
+.popup_wrap {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.popup_overlay {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: rgba(0,0,0,0.7);
+}
+.notif_content {
+    width: 600px;
+    padding: 20px;
+    background-color: #fff;
+    position: relative;
+    text-align: center;
+}
+.notif_success {
+    font-size: 24px;
+    margin: 0 0 20px;
+    color: rgb(16, 67, 118);
+}
+.notif_failure {
+    font-size: 24px;
+    margin: 0 0 20px;
+    color: rgb(181, 0, 0);
+}
+.notif_ok_btn {
+    border: 0;
+    background-color: #05A8AA;
+    font-size: 20px;
+    padding: 10px 30px;
+    border-radius: 40px;
     color: #fff;
 }

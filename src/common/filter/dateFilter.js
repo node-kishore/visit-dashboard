@@ -12,8 +12,8 @@ class DateFilter extends React.Component {
         super(props);
         this.state = {
             fromChild: '',
-            startDate: moment(new Date()),
-            endDate: moment(new Date()).add(1, 'days'),
+            startDate: moment().startOf('month'),
+            endDate: moment(new Date()),
             monthSelected: 6
         };
     }
@@ -78,9 +78,7 @@ class DateFilter extends React.Component {
                 this.props.onUpdateDate(toTransferDate);
             }
             else if(moment(this.state.endDate).diff(moment(date), 'days') > 9) {
-                this.setState({
-                    startDate: moment(this.state.endDate).add(-9,'days'),
-                });
+                // console.log(moment(this.state.endDate).add(-9,'days').format("DD-MM-YYYY"));
                 startDate = moment(this.state.endDate).add(-9,'days');
                 endDate = moment(this.state.endDate);
                 let toTransferDate = {
@@ -88,6 +86,11 @@ class DateFilter extends React.Component {
                     endDate: endDate
                 }
                 this.props.onUpdateDate(toTransferDate);
+                setTimeout(() => {
+                    this.setState({
+                        startDate: moment(this.state.endDate).add(-9,'days')
+                    });
+                })
             }
             else {
                 this.setState({
@@ -166,6 +169,7 @@ class DateFilter extends React.Component {
     }
 
     handleChangeEnd(date) {
+        console.log(this.props.dateRange);
         if(this.props.dateRange === "7 Days") {
             if(moment(date).isBefore(moment(this.state.endDate))) {
                 this.setState({
@@ -204,7 +208,7 @@ class DateFilter extends React.Component {
             }
         }
         if(this.props.dateRange === "10 Days") {
-            if(moment(date).isBefore(moment(this.state.endDate))) {
+            if(moment(date).isBefore(moment(this.state.startDate))) {
                 this.setState({
                     endDate: moment(this.state.startDate).add(1,'days')
                 });
@@ -217,9 +221,6 @@ class DateFilter extends React.Component {
                 this.props.onUpdateDate(toTransferDate);
             }
             else if(moment(date).diff(moment(this.state.startDate), 'days') > 9) {
-                this.setState({
-                    endDate: moment(this.state.startDate).add(9,'days')
-                });
                 startDate = moment(this.state.startDate);
                 endDate = moment(this.state.startDate).add(9,'days');
                 let toTransferDate = {
@@ -227,6 +228,11 @@ class DateFilter extends React.Component {
                     endDate: endDate
                 }
                 this.props.onUpdateDate(toTransferDate);
+                setTimeout(() => {
+                    this.setState({
+                        endDate: moment(this.state.startDate).add(9,'days')
+                    });
+                })
             }
             else {
                 this.setState({
@@ -474,7 +480,7 @@ class DateFilter extends React.Component {
             }
             this.props.onUpdateDate(toTransferDate);
         }
-        else if(this.props.dateRange === "1 Days") {
+        else if(this.props.dateRange === "10 Days") {
             this.setState({
                 startDate: moment(new Date()).add(-9, 'days'),
                 endDate: moment(new Date())

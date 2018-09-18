@@ -2,17 +2,24 @@ import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import Header from '../../common/header';
 import Sidebar from '../../common/sidebar';
+import Filter from '../../common/filter/common_filter';
 import axios from 'axios';
 import ENDPOINTS from '../../common/endpoints';
 import IMAGE from '../../common/image';
 
+function updateVisitData(e, account) {
+    this.setState({
+        account_main: account
+    })
+}
+
 function AccountList(props) {
     return (
         <div className="account_list_row">
-            <div className="account_checkbox">
-                <input type="checkbox" id={"acc_" + props.account.account_id} />
+            {props.teamAccounts != true && <div className="account_checkbox">
+                <input type="radio" name="rd1" id={"acc_" + props.account.account_id} onChange={(e) => updateVisitData(e, props.account)} />
                 <label htmlFor={"acc_" + props.account.account_id}></label>
-            </div>
+            </div>}
             <div className="account_row_box">
                 <div className="account_row_box_header">
                     <ul>
@@ -62,8 +69,14 @@ class Accounts extends Component {
             accounts: [],
             page_number: 1,
             loading: false,
-            showLoadMore: false
+            showLoadMore: false,
+            accountIdList: [],
+            star_type_id: [],
+            account_type: "My Accounts",
+            account: "",
+            userSelectedForFilter: []
         }
+        updateVisitData = updateVisitData.bind(this);
     }
 
     getAccount(page_number) {
@@ -109,9 +122,90 @@ class Accounts extends Component {
 
     loadMoreAccount() {
         let toBePageNumber = this.state.page_number + 1;
-        this.getAccount(toBePageNumber);
+        if(this.state.account_type === "My Accounts") {
+            this.getMyTeamAccountList(toBePageNumber, []);
+        }
+        else {
+            this.getMyTeamAccountList(toBePageNumber, this.state.userSelectedForFilter);
+        }
         this.setState({
             page_number: toBePageNumber
+        })
+    }
+
+    redirectToVisit() {
+        this.props.history.push({
+            pathname: '/update-visits',
+            state: {
+                account: this.state.account_main
+            }
+        })
+    }
+
+    changeTab(val) {
+        this.setState({
+            account_type: val,
+            page_number: 1,
+            userSelectedForFilter: []
+        })
+        if(val === "My Accounts") {
+            this.setState({
+                accounts: []
+            })
+            this.getAccount(1);
+        }
+        else {
+            this.setState({
+                accounts: []
+            })
+            this.getMyTeamAccountList(1, []);
+        }
+    }
+
+    getMyTeamAccountList(page_number, users) {
+        this.setState({
+            loading: true
+        })
+        let axiosConfig = {
+            headers: {
+                'Content-Type': 'application/json',
+                "wtoken": localStorage.getItem("authToken"),
+            }
+        };
+        axios.post(ENDPOINTS.my_team_account + "?page_no=" + page_number + "&pagination_size=20", {"user_ids": users},axiosConfig)
+            .then(res => {
+                console.log(res);
+				if(res.data.status && res.data.status == 400) {
+                    this.props.history.push('/');
+                }
+                else {
+	                this.setState({
+						loading: false,
+	                    accounts: this.state.accounts.concat(res.data.accounts)
+	                })
+                    if(res.data.accounts.length >= 20) {
+                        this.setState({
+                            showLoadMore: true
+                        })
+                    }
+                    else {
+                        this.setState({
+                            showLoadMore: false
+                        })
+                    }
+				}
+            })
+    }
+
+    filterAccountTouchBase(e) {
+        console.log(e);
+        let users = e.selectedUsers.map((elem) => {
+			return elem.id
+		})
+		this.getMyTeamAccountList(1, users);
+		this.setState({
+            existUser: e.allUsers,
+            userSelectedForFilter: users
         })
     }
 
@@ -154,22 +248,48 @@ class Accounts extends Component {
                                     </svg>
                                     Accounts
                                 </div> {/* page_title */}
-                                <ol className="breadcrumb">
-                                    <li className="active"><a href="#">My Accounts</a></li>
-                                    <li><a href="#">My Team Accounts</a></li>
-                                </ol> {/* breadcrumb */}
-                                <div className="account_filter text-right">
-                                    <button type="button" className="site_btn">Update Visits</button>
-                                </div> {/* account_filter */}
-                                <div className="account_list_wrapper position_relative">
-                                    <div className={"loader_wrap" + (this.state.loading === true ? "" : " hidden")}><img src={IMAGE.loader} alt="" /></div>
-                                    {this.state.accounts.map((item, index) => (
-                                        <AccountList key={index} account={item} />
-                                    ))}
-                                    {this.state.showLoadMore === true && <div className="text-center load_more_wrapper">
-                                        <button type="button" className="load_more_btn" onClick={this.loadMoreAccount.bind(this)}>Load More</button>
-                                    </div>}
-                                </div> {/* account_list_wrapper */}
+                                <div className="account_tab">
+                                    <ol className="breadcrumb">
+                                        <li className={"" + (this.state.account_type === "My Accounts" ? "active" : "")}><a href="javascript:void(0);" onClick={() => this.changeTab("My Accounts")}>My Accounts</a></li>
+                                        <li className={"" + (this.state.account_type === "My Team Accounts" ? "active" : "")}><a href="javascript:void(0);" onClick={() => this.changeTab("My Team Accounts")}>My Team Accounts</a></li>
+                                    </ol> {/* breadcrumb */}
+                                    {this.state.account_type === "My Team Accounts" && <Filter
+                                        existUser={this.state.existUser}
+                                        onfilterApply={this.filterAccountTouchBase.bind(this)}
+                                        filterByUser="true"
+                                        filterByDate="false"
+                                        dateFormat="without_time"
+                                        onlyCustomDate={true}
+                                        filterBtnLabel="Custom"
+                                        filterId="account_filter"
+                                        dateRange="10 Days" />}
+                                </div>
+                                {this.state.account_type === "My Accounts" && <div>
+                                    <div className="account_filter text-right">
+                                        <button type="button" onClick={this.redirectToVisit.bind(this)} className="site_btn">Update Visits</button>
+                                    </div> {/* account_filter */}
+                                    <div className="account_list_wrapper position_relative">
+                                        <div className={"loader_wrap" + (this.state.loading === true ? "" : " hidden")}><img src={IMAGE.loader} alt="" /></div>
+                                        {this.state.accounts.map((item, index) => (
+                                            <AccountList key={index} account={item} />
+                                        ))}
+                                        {this.state.accounts.length <= 0 && <div className="text-center">No accounts found</div>}
+                                        {this.state.showLoadMore === true && <div className="text-center load_more_wrapper">
+                                            <button type="button" className="load_more_btn" onClick={this.loadMoreAccount.bind(this)}>Load More</button>
+                                        </div>}
+                                    </div> {/* account_list_wrapper */}
+                                </div>}
+                                {this.state.account_type === "My Team Accounts" && <div>
+                                    <div className="account_list_wrapper position_relative">
+                                        <div className={"loader_wrap" + (this.state.loading === true ? "" : " hidden")}><img src={IMAGE.loader} alt="" /></div>
+                                        {this.state.accounts.map((item, index) => (
+                                            <AccountList key={index} account={item} teamAccounts={true} />
+                                        ))}
+                                        {this.state.showLoadMore === true && <div className="text-center load_more_wrapper">
+                                            <button type="button" className="load_more_btn" onClick={this.loadMoreAccount.bind(this)}>Load More</button>
+                                        </div>}
+                                    </div> {/* account_list_wrapper */}
+                                </div>}
                             </div>
 
                         </div>

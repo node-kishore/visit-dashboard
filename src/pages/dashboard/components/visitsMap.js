@@ -44,12 +44,13 @@ class MarkerComponent extends React.Component {
         this.setState({
             showInfoWindow: !this.state.showInfoWindow
         })
-        axios.get('http://maps.googleapis.com/maps/api/geocode/json?latlng=' + this.props.marker.latitude + ',' + this.props.marker.longitude + '&sensor=true')
+        axios.get('https://maps.googleapis.com/maps/api/geocode/json?key=AIzaSyBUqG9Mm9UcJ5JWn7Iw85VgzqkuEjYeoyU&latlng=' + this.props.marker.latitude + ',' + this.props.marker.longitude + '&sensor=false')
             .then(res => {
-                // console.log(res);
-                this.setState({
-                    placeName: res.data.results[0].address_components[2].long_name
-                })
+                console.log(res);
+                // console.log(res.data.results[0].address_components[2].long_name);
+                // this.setState({
+                //     placeName: res.data.results[0].address_components[2].long_name
+                // })
             })
     }
 
@@ -156,6 +157,9 @@ class VisitMap extends Component {
             return elem.id
         })
         this.getMapData(selectedUser, e.startDate, e.endDate);
+        this.setState({
+			existUser: e.allUsers
+		})
     }
 
     componentDidMount() {
@@ -249,6 +253,7 @@ class VisitMap extends Component {
                                     onClick={() => this.filterDate("Last Month")}>Last Month</button>
                             </div>
                             <Filter
+                                existUser={this.state.existUser}
                                 onfilterApply={this.customFilterMap.bind(this)}
                                 filterByUser="true"
                                 filterByDate="true"
@@ -264,7 +269,7 @@ class VisitMap extends Component {
                             <div className={"loader_wrap" + (this.state.loading === true ? "" : " hidden")}><img src={IMAGE.loader} alt="" /></div>
                             <MyMapComponent
                                 isMarkerShown
-                                googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAFftBQ2mfXeRec8X5HfEKSbK41loPOdCE"
+                                googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyBUqG9Mm9UcJ5JWn7Iw85VgzqkuEjYeoyU"
                                 loadingElement={<div style={{ height: `100%` }} />}
                                 containerElement={<div style={{ height: `400px` }} />}
                                 mapElement={<div style={{ height: `100%` }} />}

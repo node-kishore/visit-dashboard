@@ -1,17 +1,8 @@
 import React, { Component } from 'react';
 import moment from 'moment';
-import { findDOMNode } from 'react-dom';
 import 'react-datepicker/dist/react-datepicker.css';
 import UserFilter from './userFilter';
 import DateFilter from './dateFilter';
-import $ from 'jquery';
-
-let selectedUsers = [];
-let startDate = moment();
-let endDate = moment(new Date()).add(1,'days');
-let monthNumberSelected = 6;
-
-let allUsers = [];
 
 function FilterWrap(props) {
     // console.log(props);
@@ -25,6 +16,7 @@ function FilterWrap(props) {
     }
     else if (props.filterByUser === "true" && props.filterByDate === "false") {
         return <UserFilter
+                    existUser={props.existUser}
                     dateRange={props.dateRange}
                     users={props.users}
                     filterId={props.filterId}
@@ -34,6 +26,7 @@ function FilterWrap(props) {
         return (
             <div className="filter_wrap">
                 <UserFilter
+                    existUser={props.existUser}
                     dateRange={props.dateRange}
                     users={props.users}
                     filterId={props.filterId}
@@ -101,7 +94,8 @@ class Filter extends Component {
             selectedUsers: matches,
             startDate: moment(this.state.startDate).format(this.props.dateFormat && this.props.dateFormat === "without_time" ? "YYYY-MM-DD" : "YYYY-MM-DD HH:mm:ss"),
             endDate: moment(this.state.endDate).format(this.props.dateFormat && this.props.dateFormat === "without_time" ? "YYYY-MM-DD" : "YYYY-MM-DD HH:mm:ss"),
-            monthNumberSelected: this.state.noMonthSelected
+            monthNumberSelected: this.state.noMonthSelected,
+            allUsers: this.state.users
         }
         this.props.onfilterApply(data);
         this.closeMenu();
@@ -179,6 +173,7 @@ class Filter extends Component {
                     </div>
                     <div className="filter_wrap">
                         <FilterWrap
+                            existUser={this.props.existUser}
                             onlyCustomDate={this.props.onlyCustomDate}
                             filterId={this.props.filterId}
                             filterByUser={this.props.filterByUser}

@@ -49,7 +49,10 @@ class AccountTouchBase extends Component {
 		let users = e.selectedUsers.map((elem) => {
 			return elem.id
 		})
-		this.getAccountTouchBaseData(users, fromDate, toDate);
+        this.getAccountTouchBaseData(users, fromDate, toDate);
+        this.setState({
+			existUser: e.allUsers
+		})
 	}
 
     getAccountTouchBaseData(users, fromDate, toDate) {
@@ -127,8 +130,9 @@ class AccountTouchBase extends Component {
 		this.getAccountTouchBaseData(users, e.startDate, e.endDate);
 		this.setState({
 			filterActive: "",
-			selectedUsers: users
-		})
+            selectedUsers: users,
+            existUser: e.allUsers
+        })
 	}
 
     render() {
@@ -159,6 +163,7 @@ class AccountTouchBase extends Component {
 	                                onClick={() => this.filterDate("Last 10 Days")}>Last 10 Days</button>
                             </div>
                             <Filter
+                                existUser={this.state.existUser}
                                 onfilterApply={this.filterAccountTouchBase.bind(this)}
                                 filterByUser="true"
                                 filterByDate="true"

@@ -102,9 +102,10 @@ class Activity extends Component {
     }
 
     changeActivities(toActiveActivities) {
-        console.log(toActiveActivities);
+        // console.log(toActiveActivities);
         this.setState({
-            activitiesActive: toActiveActivities
+            activitiesActive: toActiveActivities,
+            existUser: undefined
         })
         if(toActiveActivities === "Past Activities") {
             this.setState({
@@ -250,6 +251,9 @@ class Activity extends Component {
             activityEnd: e.endDate,
             selectedUser: selectedUser
         })
+        this.setState({
+            existUser: e.allUsers
+        })
     }
 
     getAllSubordinates() {
@@ -333,6 +337,7 @@ class Activity extends Component {
                                 filterId="activity_filter"
                                 dateRange="7 Days" />}
                             {this.state.activitiesActive === "Past Activities" && this.state.whichActivity === "Team Activity" && <Filter
+                                existUser={this.state.existUser}
                                 onfilterApply={this.onfilterActivity.bind(this)}
                                 filterByUser="true"
                                 filterByDate="true"
@@ -352,6 +357,7 @@ class Activity extends Component {
                                 dateRange="Next 7 Days"
                                 disablePreviousDates={true} />}
                             {this.state.activitiesActive === "Upcoming Activities" && this.state.whichActivity === "Team Activity" && <Filter
+                                existUser={this.state.existUser}
                                 onfilterApply={this.onfilterActivity.bind(this)}
                                 filterByUser="true"
                                 filterByDate="true"

@@ -18,12 +18,12 @@ function geoFindMe() {
     function success(position) {
         var latitude  = position.coords.latitude;
         var longitude = position.coords.longitude;
-        output.style.display = "none";
+        // output.style.display = "none";
     }
     function error() {
-        output.style.display = "none";
+        // output.style.display = "none";
     }
-    output.style.display = "flex";
+    // output.style.display = "flex";
     setTimeout(() => {
         output.style.backgroundColor = "rgba(0,0,0,0.8)";
     })
